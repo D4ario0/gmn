@@ -1,4 +1,4 @@
-package term
+package tui
 
 import (
 	"bufio"
@@ -8,13 +8,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/alecthomas/chroma/quick"
+	"github.com/alecthomas/chroma/v2/quick"
+	"github.com/alperdrsnn/clime"
 )
 
 const (
 	DEFAULT_LEXER     = "markdown"
 	DEFAULT_FORMATTER = "terminal16m"
-	DEFAULT_STYLE     = "vulcan"
+	DEFAULT_STYLE     = "evergarden"
 )
 
 type FormatConfig struct {
@@ -37,13 +38,22 @@ func formatResponse(response string, fmtConf *FormatConfig) *bytes.Buffer {
 	return responseBuffer
 }
 
+// Use it to respect tabs as opposed to strings.Fields()
+func splitRespectingTabs(s string) []string {
+	return strings.Split(s, " ")
+}
+
 func OutputResponse(response string, w io.Writer, fmtConf *FormatConfig) {
+	if response == "" {
+		return
+	}
+
 	scanner := bufio.NewScanner(formatResponse(response, fmtConf))
 	scanner.Split(bufio.ScanLines)
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		words := strings.Fields(line)
+		words := splitRespectingTabs(line)
 
 		for _, word := range words {
 			_, _ = fmt.Fprintf(w, "%s ", word)
@@ -51,4 +61,11 @@ func OutputResponse(response string, w io.Writer, fmtConf *FormatConfig) {
 		}
 		_, _ = fmt.Fprint(w, "\n") // preserve line break
 	}
+}
+
+func NewSpinner(msg string) *clime.Spinner {
+	return clime.NewSpinner().
+		WithColor(clime.BlueColor).
+		WithStyle(clime.SpinnerDots).
+		WithMessage(msg)
 }
