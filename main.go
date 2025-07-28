@@ -6,7 +6,6 @@ import (
 	"gmn/tui"
 	"log"
 	"os"
-	"strings"
 )
 
 const SYS_PROMPT = `- You go straight to the point, brief answers with examples if applicable; unless asked to explain.
@@ -37,7 +36,7 @@ func main() {
 			return r
 		}()
 
-		tui.OutputResponse(strings.TrimSpace(response), os.Stdout, nil)
+		tui.OutputResponse(response, os.Stdout, nil)
 
 	}
 

@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 const USER_PROMPT = "\033[38;2;80;200;120mgemini ❱❱ \033[0m"
@@ -17,5 +18,5 @@ func PromptUser(r io.Reader, w io.Writer) (string, bool) {
 		return "", false
 	}
 
-	return string(inputBytes), true
+	return strings.TrimSpace(string(inputBytes)), true
 }
