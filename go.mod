@@ -1,4 +1,4 @@
-module gmn
+module github.com/D4ario0/gmn
 
 go 1.24.5
 

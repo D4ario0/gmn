@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"gmn/models"
-	"gmn/tui"
 	"log"
 	"os"
+
+	"github.com/D4ario0/gmn/models"
+	"github.com/D4ario0/gmn/tui"
 )
 
 const SYS_PROMPT = `- You go straight to the point, brief answers with examples if applicable; unless asked to explain.
