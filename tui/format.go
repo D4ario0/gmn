@@ -38,11 +38,6 @@ func formatResponse(response string, fmtConf *FormatConfig) *bytes.Buffer {
 	return responseBuffer
 }
 
-// Use it to respect tabs as opposed to strings.Fields()
-func splitRespectingTabs(s string) []string {
-	return strings.Split(s, " ")
-}
-
 func OutputResponse(response string, w io.Writer, fmtConf *FormatConfig) {
 	if response == "" {
 		return
@@ -53,7 +48,8 @@ func OutputResponse(response string, w io.Writer, fmtConf *FormatConfig) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		words := splitRespectingTabs(line)
+		// Use it to respect tabs as opposed to strings.Fields()
+		words := strings.Split(line, " ")
 
 		for _, word := range words {
 			_, _ = fmt.Fprintf(w, "%s ", word)
@@ -61,6 +57,8 @@ func OutputResponse(response string, w io.Writer, fmtConf *FormatConfig) {
 		}
 		_, _ = fmt.Fprint(w, "\n") // preserve line break
 	}
+	// Line break at the end
+	_, _ = fmt.Fprint(w, "\n")
 }
 
 func NewSpinner(msg string) *clime.Spinner {
