@@ -21,10 +21,6 @@ type GeminiConfig struct {
 }
 
 func Init(model, role string, ctx context.Context) (*GeminiConfig, error) {
-	if !checkInternetConnection() {
-		return nil, fmt.Errorf("%s", "No internet Connection")
-	}
-
 	geminiClient, err := genai.NewClient(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -35,6 +31,10 @@ func Init(model, role string, ctx context.Context) (*GeminiConfig, error) {
 }
 
 func PromptModel(prompt string, conf *GeminiConfig) (string, error) {
+	if !checkInternetConnection() {
+		return "", fmt.Errorf("%s", "No internet Connection")
+	}
+
 	response, err := conf.client.Models.GenerateContent(conf.ctx, conf.model, genai.Text(prompt), &genai.GenerateContentConfig{
 		ThinkingConfig:    &genai.ThinkingConfig{ThinkingBudget: &conf.thinkingBudget},
 		SystemInstruction: conf.systemPrompts,
