@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 
 	"google.golang.org/genai"
 )
@@ -20,6 +21,10 @@ type GeminiConfig struct {
 }
 
 func Init(model, role string, ctx context.Context) (*GeminiConfig, error) {
+	if !checkInternetConnection() {
+		return nil, fmt.Errorf("%s", "No internet Connection")
+	}
+
 	geminiClient, err := genai.NewClient(ctx, nil)
 	if err != nil {
 		return nil, err
