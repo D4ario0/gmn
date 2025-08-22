@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/D4ario0/gmn/internal/config"
 	"github.com/D4ario0/gmn/internal/models"
 	"github.com/D4ario0/gmn/internal/tui"
 )
@@ -14,7 +15,13 @@ const SYS_PROMPT = `- You go straight to the point, brief answers with examples 
 - You answer using markdown format.`
 
 func main() {
-	config, err := models.Init(models.GEMINI_2_0_FLASH, SYS_PROMPT, context.Background())
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Print("Could not find a config, gmn will default to `GEMINI 2.0 FLASH`")
+		cfg.Model = models.GEMINI_2_0_FLASH
+	}
+
+	client, err := models.Init(cfg.Model, cfg.GetProfileConfig(), context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,7 +36,7 @@ func main() {
 			sp := tui.NewSpinner("Generating LLM response...").Start()
 			defer sp.Stop()
 
-			r, err := models.PromptModel(input, config)
+			r, err := models.PromptModel(input, client)
 			if err != nil {
 				log.Fatal(err)
 				return ""
