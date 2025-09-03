@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 
 	"google.golang.org/genai"
 )
@@ -32,7 +31,7 @@ func Init(model, role string, ctx context.Context) (*GeminiConfig, error) {
 
 func PromptModel(prompt string, conf *GeminiConfig) (string, error) {
 	if !checkInternetConnection() {
-		return "", fmt.Errorf("%s", "No internet Connection")
+		return "**No internet connection. Please make sure you are connected to a reliable network**", nil
 	}
 
 	response, err := conf.client.Models.GenerateContent(conf.ctx, conf.model, genai.Text(prompt), &genai.GenerateContentConfig{

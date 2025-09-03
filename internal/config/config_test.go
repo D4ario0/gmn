@@ -19,11 +19,11 @@ func TestTomlFileParsing(t *testing.T) {
 		got, err := parseTomlFile([]byte(configFileContent))
 		want := &AppConfig{
 			Model:   "gemini",
-			profile: "user",
-			profiles: map[string]profile{
+			Profile: "user",
+			Profiles: map[string]profiles{
 				"user": {
-					instructions:   []string{"first command"},
-					responseFormat: "markdown",
+					Instructions:   []string{"first command"},
+					ResponseFormat: "markdown",
 				},
 			},
 		}

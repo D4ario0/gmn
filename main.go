@@ -10,18 +10,14 @@ import (
 	"github.com/D4ario0/gmn/internal/tui"
 )
 
-const SYS_PROMPT = `- You go straight to the point, brief answers with examples if applicable; unless asked to explain.
-- Any question regarding environment configuration assume it is for Linux Fedora 42.
-- You answer using markdown format.`
-
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Print("Could not find a config, gmn will default to `GEMINI 2.0 FLASH`")
-		cfg.Model = models.GEMINI_2_0_FLASH
 	}
 
 	client, err := models.Init(cfg.Model, cfg.GetProfileConfig(), context.Background())
+	// fmt.Printf("%v", cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
