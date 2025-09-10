@@ -14,7 +14,7 @@ import (
 const (
 	CONFIG_DIR     = "gmn/config.toml"
 	DEFAULT_CONFIG = `
-model = "%s"
+model = "gemini-2.0-flash"
 profile = "default"
 
 [profiles.default]
@@ -36,10 +36,8 @@ type (
 )
 
 const (
-	GEMINI_2_0_FLASH = "gemini-2.0-flash"
-	GEMINI_2_5_FLASH = "gemini-2.5-flash"
-	JSON_FORMAT      = "json"
-	MARKDOWN_FORMAT  = "markdown"
+	JSON_FORMAT     = "json"
+	MARKDOWN_FORMAT = "markdown"
 )
 
 func LoadConfig() (*AppConfig, error) {
@@ -97,7 +95,7 @@ func findConfigFile() (*os.File, error) {
 		}
 
 		// Write a DEFAULT CONFIG
-		_, err = fmt.Fprintf(f, DEFAULT_CONFIG, GEMINI_2_0_FLASH)
+		_, err = fmt.Fprint(f, DEFAULT_CONFIG)
 		return f, err
 	}
 	return os.Open(configDir)

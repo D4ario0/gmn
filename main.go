@@ -16,8 +16,7 @@ func main() {
 		log.Print("Could not find a config, gmn will default to `GEMINI 2.0 FLASH`")
 	}
 
-	client, err := models.Init(cfg.Model, cfg.GetProfileConfig(), context.Background())
-	// fmt.Printf("%v", cfg)
+	chatInstance, err := models.GetChatter(cfg.Model, cfg.GetProfileConfig(), context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +31,7 @@ func main() {
 			sp := tui.NewSpinner("Generating LLM response...").Start()
 			defer sp.Stop()
 
-			r, err := models.PromptModel(input, client)
+			r, err := chatInstance.PromptModel(input)
 			if err != nil {
 				log.Fatal(err)
 				return ""

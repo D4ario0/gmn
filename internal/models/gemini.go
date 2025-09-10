@@ -6,37 +6,38 @@ import (
 	"google.golang.org/genai"
 )
 
-const (
-	GEMINI_2_5_FLASH = "gemini-2.5-flash"
-	GEMINI_2_0_FLASH = "gemini-2.0-flash"
-)
-
-type GeminiConfig struct {
-	model          string
-	ctx            context.Context
-	thinkingBudget int32
-	client         *genai.Client
-	systemPrompts  *genai.Content
+type GeminiChat struct {
+	ctx        context.Context
+	model      string
+	chatClient *genai.Chat
 }
 
-func Init(model, role string, ctx context.Context) (*GeminiConfig, error) {
+func newGeminiChat(model, systemPrompt string, ctx context.Context) (Chatter, error) {
 	geminiClient, err := genai.NewClient(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
-	sys_role := genai.NewContentFromText(role, genai.RoleUser)
-	return &GeminiConfig{model, ctx, int32(0), geminiClient, sys_role}, nil
 
+	history := make([]*genai.Content, 2)
+
+	chat, err := geminiClient.Chats.Create(ctx, model, &genai.GenerateContentConfig{
+		SystemInstruction: genai.NewContentFromText(systemPrompt, genai.RoleUser),
+		ThinkingConfig:    &genai.ThinkingConfig{ThinkingBudget: nil},
+	}, history)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &GeminiChat{ctx, model, chat}, nil
 }
 
-func PromptModel(prompt string, conf *GeminiConfig) (string, error) {
+func (c *GeminiChat) PromptModel(prompt string) (string, error) {
 	if !checkInternetConnection() {
 		return "**No internet connection. Please make sure you are connected to a reliable network**", nil
 	}
 
-	response, err := conf.client.Models.GenerateContent(conf.ctx, conf.model, genai.Text(prompt), &genai.GenerateContentConfig{
-		ThinkingConfig:    &genai.ThinkingConfig{ThinkingBudget: &conf.thinkingBudget},
-		SystemInstruction: conf.systemPrompts,
-	})
+	response, err := c.chatClient.SendMessage(c.ctx, genai.Part{Text: prompt})
+
 	return response.Text(), err
 }
