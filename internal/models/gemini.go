@@ -13,12 +13,12 @@ type GeminiChat struct {
 }
 
 func newGeminiChat(model, systemPrompt string, ctx context.Context) (Chatter, error) {
+	var history []*genai.Content
+
 	geminiClient, err := genai.NewClient(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
-
-	history := make([]*genai.Content, 2)
 
 	chat, err := geminiClient.Chats.Create(ctx, model, &genai.GenerateContentConfig{
 		SystemInstruction: genai.NewContentFromText(systemPrompt, genai.RoleUser),
@@ -39,5 +39,5 @@ func (c *GeminiChat) PromptModel(prompt string) (string, error) {
 
 	response, err := c.chatClient.SendMessage(c.ctx, genai.Part{Text: prompt})
 
-	return response.Text(), err
+	return response.Candidates[0].Content.Parts[0].Text, err
 }
